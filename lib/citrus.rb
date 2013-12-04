@@ -1322,6 +1322,13 @@ module Citrus
       @captures
     end
 
+    # Returns an array of capture names in the order they appeared in the input.
+    def capture_names
+      captures.keys.select do |key|
+        Symbol === key
+      end
+    end
+
     # Returns an array of all immediate submatches of this match.
     def matches
       process_events! unless @matches
@@ -1341,6 +1348,14 @@ module Citrus
       else
         captures[sym].first
       end
+    end
+
+    def methods
+      super + capture_names
+    end
+
+    def respond_to?(sym)
+      super || string.respond_to?(sym) || capture_names.include?(sym)
     end
 
     alias_method :to_s, :string
